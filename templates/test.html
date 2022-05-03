@@ -1,5 +1,14 @@
+<h1>Live Chess Engine</h1>
 {% block content %}
-<section>
-    {{ svg }}
-</section>
+<img id="vid" src="{{ url_for('video_feed') }} ">
+<h1 id="svg"></h1>
+<button onclick="updateBoard()" type="button">Next Move</button>
 {% endblock %}
+<script>
+    function updateBoard() {
+        fetch("/update");
+        let ele = document.getElementById("vid");
+        ele.src = "/video_feed?_=" + new Date().getTime();
+    }
+
+</script>
