@@ -1,0 +1,588 @@
+/* This source code is exported from pxCode, you can get more document from https://www.pxcode.io */
+@import "utils";
+
+$font_type0: 7px/1.2 "Inter", Helvetica, Arial, serif;
+$font_type1: 30px/1.2 "Inter", Helvetica, Arial, serif;
+$font_type2: 20px/1.2 "Inter", Helvetica, Arial, serif;
+$font_type3: 15px/1.2 "Inter", Helvetica, Arial, serif;
+$font_type4: 10px/1.2 "Inter", Helvetica, Arial, serif;
+
+.block {
+  @include flex-column;
+  background-color: rgb(30, 30, 30);
+}
+.block_layout {
+  position: absolute;
+  overflow: hidden;
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+}
+.block1 {
+  display: flex;
+  @include xs {
+    flex-wrap: wrap;
+    row-gap: 16px;
+  }
+}
+.block1_layout {
+  position: relative;
+  overflow: hidden;
+  height: min-content;
+  margin: 0px 9px;
+  @include lg {
+    margin: 0px 8px;
+  }
+  @include md {
+    margin: 0px 7px;
+  }
+  @include sm {
+    margin: 0px 6px;
+  }
+  @include xs {
+    margin: 0px 5px;
+  }
+}
+.block1_item {
+  @include flex-column;
+  position: relative;
+  flex: 1 1 238px;
+  @include xs {
+    flex: 0 0 100%;
+  }
+}
+.image {
+  background: var(--src) center center / contain no-repeat;
+  cursor: pointer;
+}
+.image_layout {
+  position: relative;
+  height: 89px;
+  margin: 0px 0px 0px 44px;
+  @include lg {
+    margin: 0px 0px 0px 38px;
+  }
+  @include md {
+    margin: 0px 0px 0px 31px;
+  }
+  @include sm {
+    margin: 0px 0px 0px 25px;
+  }
+  @include xs {
+    margin: 0px 22px;
+  }
+  @include xxs {
+    margin: 0px 20px;
+  }
+  @include tn {
+    margin: 0px 18px;
+  }
+}
+.block1_spacer {
+  @include flex-column;
+  position: relative;
+  flex: 0 1 708px;
+  @include xs {
+    display: none;
+  }
+}
+.block1_item1 {
+  @include flex-column;
+  position: relative;
+  flex: 1 1 458px;
+  @include xs {
+    flex: 0 0 100%;
+  }
+}
+.block2 {
+  display: flex;
+}
+.block2_layout {
+  position: relative;
+  height: min-content;
+  margin: 29px 0px 28px;
+  @include lg {
+    margin: 25px 0px;
+  }
+  @include md {
+    margin: 22px 0px 21px;
+  }
+  @include sm {
+    margin: 18px 0px;
+  }
+  @include xs {
+    margin: 17px 0px 16px;
+  }
+  @include xxs {
+    margin: 15px 0px 14px;
+  }
+  @include tn {
+    margin: 14px 0px 13px;
+  }
+}
+.block2_item {
+  @include flex-column;
+  position: relative;
+  flex: 0 1 91px;
+}
+.block3 {
+  display: flex;
+  cursor: pointer;
+}
+.block3_layout {
+  position: relative;
+  height: min-content;
+  margin: 0px 0px 2px;
+  @include lg {
+    margin: 0px 0px 5px;
+  }
+}
+.block3_item {
+  @include flex-column;
+  position: relative;
+  flex: 0 1 27px;
+}
+.icon {
+  background: var(--src) center center / contain no-repeat;
+}
+.icon_layout {
+  position: relative;
+  height: 27px;
+  width: 27px;
+  min-width: 27px;
+  margin: 0px 0px 3px;
+  @include lg {
+    margin: 0px 0px 5px;
+  }
+}
+.subtitle {
+  @include font-face($font_type2, rgb(255, 255, 255), 0px);
+  @include lg {
+    font-size: 19px;
+    text-align: left;
+  }
+  @include md {
+    font-size: 18px;
+  }
+  @include sm {
+    font-size: 17px;
+  }
+  @include xxs {
+    font-size: 16px;
+  }
+}
+.subtitle_layout {
+  position: relative;
+  flex: 0 0 auto;
+  height: min-content;
+  margin: 6px 0px 0px;
+  @include lg {
+    margin: 5px 0px 0px;
+  }
+}
+.block2_spacer {
+  @include flex-column;
+  position: relative;
+  flex: 0 1 56px;
+}
+.block2_item1 {
+  @include flex-column;
+  position: relative;
+  flex: 0 1 92px;
+}
+.block4 {
+  display: flex;
+  cursor: pointer;
+}
+.block4_layout {
+  position: relative;
+  height: min-content;
+}
+.block4_item {
+  @include flex-column;
+  position: relative;
+  flex: 0 1 30px;
+}
+.block5 {
+  @include flex-column;
+}
+.block5_layout {
+  position: relative;
+  overflow: hidden;
+  height: min-content;
+  margin: 0px 0px 1px;
+  @include lg {
+    margin: 0px 0px 5px;
+  }
+}
+.image1 {
+  background: var(--src) center center / contain no-repeat;
+}
+.image1_layout {
+  position: relative;
+  height: 19px;
+  width: 18px;
+  min-width: 18px;
+  margin: 6px;
+  @include lg {
+    margin: 5px;
+  }
+}
+.subtitle_layout1 {
+  position: relative;
+  flex: 0 0 auto;
+  height: min-content;
+  margin: 8px 0px 0px;
+  @include lg {
+    margin: 7px 0px 0px;
+  }
+  @include md {
+    margin: 6px 0px 0px;
+  }
+  @include sm {
+    margin: 5px 0px 0px;
+  }
+}
+.block2_spacer1 {
+  @include flex-column;
+  position: relative;
+  flex: 0 1 58px;
+}
+.block2_item2 {
+  @include flex-column;
+  position: relative;
+  flex: 0 1 117px;
+}
+.block6 {
+  display: flex;
+  cursor: pointer;
+}
+.block6_layout {
+  position: relative;
+  height: min-content;
+}
+.block6_item {
+  @include flex-column;
+  position: relative;
+  flex: 0 1 30px;
+}
+.subtitle_layout2 {
+  position: relative;
+  flex: 0 0 auto;
+  height: min-content;
+  margin: 8px 0px 0px;
+  @include lg {
+    margin: 7px 0px 0px;
+  }
+  @include md {
+    margin: 6px 0px 0px;
+  }
+  @include sm {
+    margin: 5px 0px 0px;
+  }
+}
+.big_title {
+  @include font-face($font_type1, rgb(77, 77, 77), 0px);
+  @include lg {
+    font-size: 27px;
+    text-align: left;
+  }
+  @include md {
+    font-size: 24px;
+  }
+  @include sm {
+    font-size: 21px;
+  }
+  @include xs {
+    font-size: 20px;
+  }
+  @include xxs {
+    font-size: 18px;
+  }
+  @include tn {
+    font-size: 17px;
+  }
+}
+.big_title_layout {
+  position: relative;
+  height: min-content;
+  width: 32.63%;
+  margin: 33px auto 0px;
+  @include lg {
+    margin: 29px auto 0px;
+  }
+  @include md {
+    margin: 24px auto 0px;
+  }
+  @include sm {
+    margin: 20px auto 0px;
+  }
+  @include xs {
+    width: 39.25%;
+    margin: 18px auto 0px;
+  }
+  @include xxs {
+    width: 46.27%;
+    margin: 16px auto 0px;
+  }
+  @include tn {
+    width: 53.45%;
+    margin: 15px auto 0px;
+  }
+}
+.block7 {
+  display: flex;
+  @include lg {
+    flex-wrap: wrap;
+    row-gap: 16px;
+  }
+}
+.block7_layout {
+  position: relative;
+  min-height: 359px;
+  flex-shrink: 0;
+  width: 1110px;
+  min-width: 1110px;
+  margin: 60px auto 170px;
+}
+.block7_item {
+  @include flex-column;
+  position: relative;
+  flex: 1 1 817px;
+  @include lg {
+    flex: 0 0 100%;
+  }
+}
+.block8 {
+  display: flex;
+  @include xl {
+    flex-wrap: wrap;
+    row-gap: 16px;
+  }
+}
+.block8_layout {
+  position: relative;
+  height: min-content;
+}
+.block8_item {
+  @include flex-column;
+  position: relative;
+  flex: 1 1 400px;
+  @include xl {
+    flex: 0 0 100%;
+  }
+}
+.block9 {
+  @include flex-column;
+  background: var(--src) center center / contain no-repeat;
+  border: 1px solid rgb(78, 78, 78);
+  border-radius: 10px 10px 10px 10px;
+}
+.block9_layout {
+  position: relative;
+  height: 359px;
+}
+.block8_spacer {
+  @include flex-column;
+  position: relative;
+  flex: 0 1 17px;
+  @include xl {
+    display: none;
+  }
+}
+.block7_spacer {
+  @include flex-column;
+  position: relative;
+  flex: 0 0 auto;
+  min-width: 37px;
+  @include lg {
+    display: none;
+  }
+}
+.block7_item1 {
+  @include flex-column;
+  position: relative;
+  flex: 1 1 256px;
+  @include lg {
+    flex: 0 0 100%;
+  }
+}
+.block10 {
+  @include flex-column;
+  background-color: rgb(20, 19, 19);
+  border-radius: 10px 10px 10px 10px;
+}
+.block10_layout {
+  position: relative;
+  flex-grow: 1;
+  min-height: 355px;
+  flex-shrink: 0;
+  width: 256px;
+  min-width: 256px;
+  margin: 2px 0px;
+}
+.highlights {
+  overflow: visible;
+  margin-top: 0px;
+  margin-bottom: 0px;
+  margin: 0px;
+  font: $font_type3;
+  color: rgb(255, 255, 255);
+  text-align: center;
+  letter-spacing: 0px;
+  white-space: pre-wrap;
+  @include lg {
+    font-size: 14px;
+    text-align: center;
+  }
+  @include md {
+    font-size: 13px;
+  }
+  @include xs {
+    font-size: 12px;
+  }
+}
+.highlights_box {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  @include lg {
+    align-items: flex-end;
+    justify-content: center;
+  }
+  @include md {
+    align-items: flex-end;
+    justify-content: center;
+  }
+  @include xs {
+    align-items: flex-end;
+    justify-content: center;
+  }
+}
+.highlights_box_layout {
+  position: relative;
+  height: min-content;
+  margin: 10px 0px 0px;
+}
+.block11 {
+  @include flex-column;
+  background-color: rgb(31, 31, 31);
+  border-radius: 5px 5px 5px 5px;
+  cursor: pointer;
+}
+.block11_layout {
+  position: relative;
+  height: min-content;
+  margin: 27px 33px 0px;
+}
+.small_text_body {
+  @include h-center-content;
+  font: $font_type4;
+  color: rgb(255, 255, 255);
+  text-align: center;
+  letter-spacing: 0px;
+}
+.small_text_body_layout {
+  position: relative;
+  height: min-content;
+  margin: 16px 0px;
+}
+.block12 {
+  @include flex-column;
+  background-color: rgb(0, 0, 0);
+  border-radius: 5px 5px 5px 5px;
+  cursor: pointer;
+}
+.block12_layout {
+  position: relative;
+  height: min-content;
+  margin: 27px 33px 0px 34px;
+}
+.block13 {
+  @include flex-column;
+}
+.block13_layout {
+  position: relative;
+  height: min-content;
+  width: 63px;
+  min-width: 63px;
+  margin: 27px auto 0px;
+}
+.image3 {
+  background: var(--src) center center / contain no-repeat;
+}
+.image3_layout {
+  position: relative;
+  height: 22px;
+  width: 24px;
+  min-width: 24px;
+  margin: 0px 18px 0px 21px;
+}
+.small_text_body1 {
+  @include font-face($font_type4, rgb(255, 255, 255), 0px);
+}
+.small_text_body1_layout {
+  position: relative;
+  height: min-content;
+  margin: 9px 0px 0px;
+}
+.block14 {
+  @include flex-column;
+}
+.block14_layout {
+  position: relative;
+  height: min-content;
+  margin: 26px 0px 0px;
+}
+.block15 {
+  @include flex-column;
+  background-color: rgb(18, 17, 17);
+  border-radius: 0px 0px 10px 10px;
+}
+.block15_layout {
+  position: relative;
+  height: min-content;
+}
+.block16 {
+  display: flex;
+  background-color: rgb(31, 31, 31);
+  border-radius: 3px 3px 3px 3px;
+  cursor: pointer;
+}
+.block16_layout {
+  position: relative;
+  height: min-content;
+  width: 75px;
+  min-width: 75px;
+  margin: 34px auto;
+}
+.block16_item {
+  @include flex-column;
+  position: relative;
+  flex: 0 1 18px;
+}
+.icon1 {
+  background: var(--src) center center / contain no-repeat;
+}
+.icon1_layout {
+  position: relative;
+  height: 8px;
+  width: 8px;
+  min-width: 8px;
+  margin: 9px 0px 10px 10px;
+}
+.block16_spacer {
+  @include flex-column;
+  position: relative;
+  flex: 0 1 2px;
+}
+.small_text_body11 {
+  @include font-face($font_type0, rgb(255, 255, 255), 0px);
+}
+.small_text_body11_layout {
+  position: relative;
+  flex: 0 0 auto;
+  height: min-content;
+  margin: 9px 10px 9px 0px;
+}
