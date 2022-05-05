@@ -7,8 +7,6 @@ import styles from './Main_Screen.module.scss';
 
 export default function Main_Screen(props) {
 
-  const imgToRotate=cn(styles.block9, styles.block9_layout)
-
   return (
     <div className={`main--screen ${cn(styles.block, styles.block_layout)}`}>
       <div className={cn(styles.block1, styles.block1_layout)}>
@@ -81,7 +79,8 @@ export default function Main_Screen(props) {
             <div className={cn(styles.block8_item)}>
               <div
                 style={{ '--src': `url(${require('assets/e485d7b3f099e5cf261cf7d8054518f1.png').default})` }}
-                className={imgToRotate}
+                id={'imgToRotate'} 
+                className={cn(styles.block9, styles.block9_layout)}
               />
             </div>
           </div>
@@ -93,11 +92,11 @@ export default function Main_Screen(props) {
               <pre className={cn(styles.highlights)}>{'Active  Colour'}</pre>
             </h5>
 
-            <div className={cn(styles.block11, styles.block11_layout)} onClick={() => alert('ur gay')}>
+            <div id={'whiteBtn'} className={cn(styles.block11, styles.block11_layout)} onClick={() => alert('ur gay')}>
               <div className={cn(styles.small_text_body, styles.small_text_body_layout)}>{'White to move'}</div>
             </div>
 
-            <div className={cn(styles.block12, styles.block12_layout)} onClick={() => alert('ur gay')}>
+            <div id={'blackBtn'} className={cn(styles.block12, styles.block12_layout)} onClick={() => alert('ur gay')}>
               <div className={cn(styles.small_text_body, styles.small_text_body_layout)}>{'Black to move'}</div>
             </div>
 
@@ -111,7 +110,7 @@ export default function Main_Screen(props) {
 
             <div className={cn(styles.block14, styles.block14_layout)}>
               <div className={cn(styles.block15, styles.block15_layout)}>
-                {/* When button clicked below, rotate className:imgToRotate */}
+                {/* When button clicked below, rotate div id:imgToRotate */}
                 <div className={cn(styles.block16, styles.block16_layout)} onClick={() => alert('ur gay')}> 
                   <div className={cn(styles.block16_item)}>
                     <div
