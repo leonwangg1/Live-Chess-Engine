@@ -24,7 +24,7 @@ class App extends Component {
         <Switch>
           <Route exact path="/">
             <div>
-              pxCode Screen List: <br />
+              Screen List: <br />
               <Link to="/Main_Screen">Main_Screen</Link>
             </div>
           </Route>
