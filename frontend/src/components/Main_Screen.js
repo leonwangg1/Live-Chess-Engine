@@ -68,10 +68,10 @@ export default function Main_Screen(props) {
         <div className={cn(styles.block7_item)}>
           <div className={cn(styles.block8, styles.block8_layout)}>
             <div className={cn(styles.block8_item)}>
-              <div
-                style={{ '--src': `url(${require('assets/c18367ef261ee28362b173d7696e662f.png').default})` }}
-                className={cn(styles.block9, styles.block9_layout)}
-              />
+              <img 
+              src={'/stream'} 
+              className={cn(styles.block9, styles.block9_layout)}
+              alt="Live Video Feed"/>
             </div>
             <div className={cn(styles.block8_spacer)} />
             <div className={cn(styles.block8_item)}>

@@ -7,9 +7,18 @@ import chess.svg
 import chess
 import datetime
 import time
+import threading
+
 a = 0
 b = stockfish_test.board
+
 app = Flask(__name__)
+
+# initialize a lock used to ensure thread-safe
+# exchanges of the frames (useful for multiple browsers/tabs
+# are viewing tthe stream)
+lock = threading.Lock()
+
 @app.route('/')
 def main():
     # svg = chess.svg.board(stockfish_test.board)
@@ -51,3 +60,41 @@ def lmao():
     # return Response(gay(a), mimetype="text")
     return {"now" : gay(a)}
 app.run()
+
+@app.route('/stream',methods = ['GET'])
+def stream():
+   return Response(generate(), mimetype = "multipart/x-mixed-replace; boundary=frame")
+
+def generate():
+   # grab global references to the lock variable
+   global lock
+   # initialize the video stream
+   vc = cv2.VideoCapture(0)
+   
+   # check camera is open
+   if vc.isOpened():
+      rval, frame = vc.read()
+   else:
+      rval = False
+
+   # while streaming
+   while rval:
+      # wait until the lock is acquired
+      with lock:
+         # read next frame
+         rval, frame = vc.read()
+         # if blank frame
+         if frame is None:
+            continue
+
+         # encode the frame in JPEG format
+         (flag, encodedImage) = cv2.imencode(".jpg", frame)
+
+         # ensure the frame was successfully encoded
+         if not flag:
+            continue
+
+      # yield the output frame in the byte format
+      yield(b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' + bytearray(encodedImage) + b'\r\n')
+   # release the camera
+   vc.release()
