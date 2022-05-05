@@ -611,8 +611,8 @@ $font_type4: 10px/1.2 "Inter", Helvetica, Arial, serif;
 }
 .small_text_body11_layout {
   position: relative;
-  flex: 0 0 auto;
-  height: min-content;
-  margin: 9
-  px 10px 9px 0px;
+  height: 9px;
+  width: 45px;
+  min-width: 45px;
+  margin: 9px auto;
 }
