@@ -2,7 +2,6 @@
 import React from 'react';
 import cn from 'classnames';
 import * as functions from './functions'
-
 import styles from './Main_Screen.module.scss';
 
 export default function Main_Screen(props) {
@@ -34,7 +33,7 @@ export default function Main_Screen(props) {
             </div>
             <div className={cn(styles.block2_spacer)} />
             <div className={cn(styles.block2_item1)}>
-              <div onClick={() => window.open('About ', '_self')} id={'aboutBtn'} className={cn(styles.block4, styles.block4_layout)}>
+              <div onClick={() => window.open('About', '_self')} id={'aboutBtn'} className={cn(styles.block4, styles.block4_layout)}>
                 <div className={cn(styles.block4_item)}>
                   <div className={cn(styles.block5, styles.block5_layout)}>
                     <div style={{ '--src': `url(${require('assets/cde979ed7f951020a3e3728f2640fd68.png').default})` }} className={cn(styles.image1, styles.image1_layout)} />
@@ -65,7 +64,6 @@ export default function Main_Screen(props) {
       <h1 id={'bestMoveText'} className={cn(styles.big_title, styles.big_title_layout)}>
       {'Next Best Move TextLabel'}
       </h1>
-
       <div className={cn(styles.block7, styles.block7_layout)}>
         <div className={cn(styles.block7_item)}>
           <div className={cn(styles.block8, styles.block8_layout)}>
@@ -81,7 +79,7 @@ export default function Main_Screen(props) {
                 style={{ '--src': `url(${require('assets/e485d7b3f099e5cf261cf7d8054518f1.png').default})` }}
                 id={'imgToRotate'} 
                 className={cn(styles.block9, styles.block9_layout)}
-              />
+              />  
             </div>
           </div>
         </div>
