@@ -396,6 +396,9 @@ $font_type4: 10px/1.2 "Inter", Helvetica, Arial, serif;
 .block9_layout {
   position: relative;
   height: 359px;
+  width: 400px;
+  min-width: 400px;
+  margin: 0px 0px;
 }
 .block8_spacer {
   @include flex-column;
