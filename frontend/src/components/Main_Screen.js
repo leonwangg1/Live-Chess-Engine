@@ -75,11 +75,10 @@ export default function Main_Screen(props) {
             </div>
             <div className={cn(styles.block8_spacer)} />
             <div className={cn(styles.block8_item)}>
-              <div
-                style={{ '--src': `url(${require('assets/e485d7b3f099e5cf261cf7d8054518f1.png').default})` }}
-                id={'imgToRotate'} 
-                className={cn(styles.block9, styles.block9_layout)}
-              />  
+            <img 
+              src={'/video_feed'} 
+              className={cn(styles.block9, styles.block9_layout)}
+              alt="Live Video Feed"/>
             </div>
           </div>
         </div>
