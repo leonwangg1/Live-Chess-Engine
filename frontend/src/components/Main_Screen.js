@@ -76,7 +76,7 @@ export default function Main_Screen(props) {
             <div className={cn(styles.block8_spacer)} />
             <div className={cn(styles.block8_item)}>
             <img 
-              src={'/video_feed'} 
+              src={'/board'} 
               className={cn(styles.block9, styles.block9_layout)}
               alt="Live Video Feed"/>
             </div>
