@@ -1,6 +1,7 @@
 <h1>Live Chess Engine</h1>
 {% block content %}
 <img id="vid" src="{{ url_for('board_feed') }} ">
+<img id="as" src="{{ url_for('stream') }} ">
 <h1 id="svg"></h1>
 <button onclick="updateBoard()" type="button">Next Move</button>
 {% endblock %}

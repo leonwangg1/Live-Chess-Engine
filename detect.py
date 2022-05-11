@@ -7,8 +7,9 @@ import perspective
 b = chess.Board(None)
 model = torch.hub.load('yolov5-master', 'custom', path='best.pt', source='local')
 
-im = cv2.imread('IMG_20220511_215025.jpg')
-im = perspective.change_perspective(im)
+im = cv2.imread('chess_stuff/a3863d0be6002c21b20ac88817b2c56f_jpg.rf.0413d5178136ace55f588df9556c060a.jpg')
+# im = perspective.change_perspective(im)
+im = cv2.cvtColor(im, cv2.COLOR_BGR2RGB)
 x, y, _ = im.shape
 board = []
 x_end = -1

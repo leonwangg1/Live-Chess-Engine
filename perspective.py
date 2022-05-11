@@ -13,8 +13,8 @@ import chess
 EDGE_DETECTION_THRESHOLD = 0.05
 GAUSSIAN_BLUR_SIGMA = 0.7
 HOUGH_LINES_DISPLAY_WIDTH = 4
-VIDEO_SHAPE = (640, 480)
-BOARD_CUTOUT_SIZE = (480, 480)
+VIDEO_SHAPE = (980, 640)
+BOARD_CUTOUT_SIZE = (640, 640)
 
 def process_chessboard_im(im):
     '''
@@ -440,7 +440,7 @@ def prune_nonchess_lines(angles, dists):
     elif len(angles) == 10:
         return angles[:-1], dists[:-1]
     else:
-        return ([], [])
+        return (angles[2:10], dists[2:10])
 
 def four_point_transform(im, points):
     '''
@@ -482,7 +482,9 @@ def change_perspective(img):
         intersections = find_intersections(h_angles_4, h_dists_4, v_angles_4, v_dists_4)
         corners = [intersections[0], intersections[-9], intersections[-1], intersections[8]]
         im_cropped = four_point_transform(img, corners)
+        im_cropped = cv2.cvtColor(im_cropped, cv2.COLOR_BGR2RGB)
         return im_cropped
-    except:
+    except Exception as e:
+        print(e)
         return None
     

@@ -2,6 +2,7 @@ from flask import Markup, Flask, render_template, Response, url_for
 import cv2
 from chess_stuff import stockfish_test
 import chess.svg
+import chess.engine
 import chess
 import datetime
 import time
@@ -11,9 +12,10 @@ import asyncio
 import perspective
 
 model = torch.hub.load('yolov5-master', 'custom', path='best.pt', source='local')
-board = stockfish_test.board
+board = chess.Board()
+engine = chess.engine.SimpleEngine.popen_uci("./stockfish_15_x64_avx2")
 app = Flask(__name__)
-
+vc = cv2.VideoCapture(0)
 lock = threading.Lock()
 
 @app.route('/')
@@ -28,14 +30,25 @@ def board_feed():
     
 def get_board(board):
   while True:
-    svg = chess.svg.board(board, size=400)
+    global engine
+    _, frame = vc.read()
+    board = classify(frame)
+    move = None
+    try:
+       move = engine.play(board, chess.engine.Limit(time=0.5)).move
+    except Exception as e:
+       engine = chess.engine.SimpleEngine.popen_uci("./stockfish_15_x64_avx2")
+    if move is None:
+       svg = chess.svg.board(board, size=400)
+    else:
+      svg = chess.svg.board(board, size=400, arrows=[chess.svg.Arrow(move.from_square, move.to_square)])
     yield ('--frame\r\n'
                 'Content-Type: image/svg+xml\r\n\r\n' + svg + '\r\n')
-    time.sleep(1)
+    time.sleep(4)
 
 @app.route('/update')
 def update():
-  board.push(stockfish_test.engine.play(board, chess.engine.Limit(time=1)).move)
+  board.push(engine.play(board, chess.engine.Limit(time=1)).move)
   return {"status": "success"}
    
 @app.route('/stream',methods = ['GET'])
@@ -44,8 +57,7 @@ def stream():
 
 def classify(im):
    b = chess.Board(None)
-   im = perspective.change_perspective(im)
-   print("why")
+   im = perspective.change_perspective(im)   
    if im is None:
       return
    x, y, _ = im.shape
@@ -113,16 +125,14 @@ def classify(im):
                   if name == "white-king":
                      cpiece = chess.Piece(chess.KING, chess.WHITE)
                      b.set_piece_at(chess.square(x, y), cpiece)
-      global board
-      print("imgay")
-      board = b
+   return b
+
 
 def generate():
    # grab global references to the lock variable
    global lock
    # initialize the video stream
-   global vc
-   vc = cv2.VideoCapture(0)
+   
    
    # check camera is open
    if vc.isOpened():
@@ -150,8 +160,6 @@ def generate():
       # yield the output frame in the byte format
       # await classify(frame[:, :, ::-1])
       
-      classify(frame)
-      print("Hi")
       yield(b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' + bytearray(encodedImage) + b'\r\n')
    # release the camera
    vc.release()
