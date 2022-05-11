@@ -5,5 +5,6 @@ In order to suggest the next best move, we should first know the current positio
 Dataset: https://public.roboflow.com/object-detection/chess-full
 
 Our approach follows this process:
+
 ![image](https://user-images.githubusercontent.com/62505788/167887379-b2e36bbd-80bc-469d-a598-6cd64a6bafae.png)
 
