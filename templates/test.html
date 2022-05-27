@@ -1,13 +1,14 @@
-<h1>Live Chess Engine</h1>
-{% block content %}
-<img id="vid" src="{{ url_for('board_feed') }} ">
-<img id="as" src="{{ url_for('stream') }} ">
-<h1 id="svg"></h1>
-<button onclick="updateBoard()" type="button">Next Move</button>
-{% endblock %}
-<script>
-    function updateBoard() {
-        fetch("/update");
-    }
-
-</script>
+<!doctype html>
+<head>
+    <title>{% block title %}{% endblock %} - Live Chess Engine</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <nav>
+    <h1>Live Chess Engine</h1>
+    </nav>
+    <section class="content">
+    <header>
+        {% block header %}{% endblock %}
+    </header>
+    </section>
+</head>
