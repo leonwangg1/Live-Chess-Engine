@@ -4,7 +4,24 @@ In order to suggest the next best move, we should first know the current positio
 
 Dataset: https://public.roboflow.com/object-detection/chess-full
 
+## Files
+
+detection.py : piece detection
+main.py : X-corner detection, grid-fitting, integration with piece detection
+gui.py : runnable file to use this pipeline
+test.py : bulk testing of images in test folder
+
+## Approach
+
 Our approach follows this process:
 
 ![image](https://user-images.githubusercontent.com/62505788/167887379-b2e36bbd-80bc-469d-a598-6cd64a6bafae.png)
 
+## How to use
+
+```shell
+git clone https://github.com/leonwangg1/Live-Chess-Engine
+flask run
+cd frontend
+npm start
+```
