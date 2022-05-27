@@ -6,10 +6,8 @@ Dataset: https://public.roboflow.com/object-detection/chess-full
 
 ## Files
 
-detection.py : piece detection
-main.py : X-corner detection, grid-fitting, integration with piece detection
-gui.py : runnable file to use this pipeline
-test.py : bulk testing of images in test folder
+- perspective.py : grid detection
+- ....
 
 ## Approach
 
