@@ -20,13 +20,6 @@ from detectron2.data.catalog import DatasetCatalog
 from detectron2.utils.visualizer import ColorMode
 from detectron2.data.datasets import register_coco_instances
 
-# Register dataset for detectron2
-def load_dataset():
-    register_coco_instances("my_dataset_train", {}, "dataset/train/_annotations.coco.json", "dataset/train")
-    register_coco_instances("my_dataset_val", {}, "dataset/valid/_annotations.coco.json", "dataset/valid")
-    my_dataset_train_metadata = MetadataCatalog.get("my_dataset_train")
-    dataset_dicts = DatasetCatalog.get("my_dataset_train")
-
 # Load model
 def load_model():
     cfg = get_cfg()
@@ -41,7 +34,7 @@ def load_model():
     return cfg
 
 def main():
-    global encodedImage
+    # Register dataset for detectron2
     register_coco_instances("my_dataset_train", {}, "dataset/train/_annotations.coco.json", "dataset/train")
     register_coco_instances("my_dataset_val", {}, "dataset/valid/_annotations.coco.json", "dataset/valid")
     my_dataset_train_metadata = MetadataCatalog.get("my_dataset_train")
