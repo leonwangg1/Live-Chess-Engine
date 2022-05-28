@@ -22,6 +22,11 @@ from detectron2.data.datasets import register_coco_instances
 
 # Load model
 def load_model():
+    # Register dataset for detectron2
+    register_coco_instances("my_dataset_train", {}, "dataset/train/_annotations.coco.json", "dataset/train")
+    register_coco_instances("my_dataset_val", {}, "dataset/valid/_annotations.coco.json", "dataset/valid")
+    my_dataset_train_metadata = MetadataCatalog.get("my_dataset_train")
+    dataset_dicts = DatasetCatalog.get("my_dataset_train")
     cfg = get_cfg()
     cfg.merge_from_file(model_zoo.get_config_file('COCO-Detection/faster_rcnn_R_50_FPN_3x.yaml'))
     cfg.DATASETS.TRAIN = ("my_dataset_train",)
@@ -33,31 +38,32 @@ def load_model():
     key = "instances"
     return cfg
 
-def main():
-    # Register dataset for detectron2
-    register_coco_instances("my_dataset_train", {}, "dataset/train/_annotations.coco.json", "dataset/train")
-    register_coco_instances("my_dataset_val", {}, "dataset/valid/_annotations.coco.json", "dataset/valid")
-    my_dataset_train_metadata = MetadataCatalog.get("my_dataset_train")
-    dataset_dicts = DatasetCatalog.get("my_dataset_train")
+# def main():
+#     cfg = load_model()
+#     test_metadata = MetadataCatalog.get("my_dataset_test")
+#     key = "instances"
 
-    cfg = load_model()
-    test_metadata = MetadataCatalog.get("my_dataset_test")
-    key = "instances"
+#     predictor = DefaultPredictor(cfg)
+#     vid = cv2.VideoCapture(0, cv2.CAP_DSHOW)
 
-    predictor = DefaultPredictor(cfg)
-    vid = cv2.VideoCapture(0, cv2.CAP_DSHOW)
-
-    while True:
-        # check camera is open
-        if vid.isOpened():
-                ret, frame = vid.read()
-                outputs = predictor(frame)
-                v = Visualizer(frame[:, :, ::-1], MetadataCatalog.get(cfg.DATASETS.TRAIN[0]), scale=0.5, instance_mode=ColorMode.SEGMENTATION)
-                out = v.draw_instance_predictions(outputs["instances"].to("cpu"))
-                (flag, encodedImage) = cv2.imencode(".jpg", out.get_image()[:, :, ::-1])
-                yield(b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' + bytearray(encodedImage) + b'\r\n')
-                # cv2.imshow("frame", out.get_image()[:, :, ::-1])
-                # cv2.waitKey(1)
-        else:
-            ret = False
+#     while True:
+#         # check camera is open
+#         if vid.isOpened():
+#                 ret, frame = vid.read()
+#                 outputs = predictor(frame)
+#                 v = Visualizer(frame[:, :, ::-1], MetadataCatalog.get(cfg.DATASETS.TRAIN[0]), scale=0.5, instance_mode=ColorMode.SEGMENTATION)
+#                 out = v.draw_instance_predictions(outputs["instances"].to("cpu"))
+#                 prediction_boxes = outputs["instances"].pred_boxes
+#                 metadata = MetadataCatalog.get(cfg.DATASETS.TRAIN[0])
+#                 class_catalog = metadata.thing_classes
+#                 for idx, coordinates in enumerate(prediction_boxes):
+#                     class_index = outputs["instances"].pred_classes[idx]
+#                     class_name = class_catalog[class_index]
+#                     print(class_name, coordinates.cpu().numpy())
+#                 (flag, encodedImage) = cv2.imencode(".jpg", out.get_image()[:, :, ::-1])
+#                 yield(b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' + bytearray(encodedImage) + b'\r\n')
+#                 # cv2.imshow("frame", out.get_image()[:, :, ::-1])
+#                 # cv2.waitKey(1)
+#         else:
+#             ret = False
 
