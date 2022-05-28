@@ -1,4 +1,4 @@
-# install dependencies: (use cu101 because colab has CUDA 10.1)
+# install dependencies: (use https://pytorch.org/get-started/locally/ based on your cuda version installed)
 # pip install -U torch==1.5 torchvision==0.6 -f https://download.pytorch.org/whl/cu101/torch_stable.html 
 # pip install cython pyyaml==5.1
 # git clone https://github.com/facebookresearch/detectron2.git
