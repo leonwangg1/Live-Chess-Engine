@@ -32,6 +32,8 @@ def main():
 @app.route('/board')
 def board_feed():
     global board
+    global cfg
+    global cv
     return Response(chessboarddetection.get_board(cfg, vc, board),
                     mimetype='multipart/x-mixed-replace; boundary=frame')
 

@@ -38,7 +38,6 @@ def load_model():
     key = "instances"
     return cfg
 
-<<<<<<< HEAD
 def video_prediction(cfg):
     predictor = DefaultPredictor(cfg)
     vid = cv2.VideoCapture(0, cv2.CAP_DSHOW)
@@ -54,34 +53,4 @@ def video_prediction(cfg):
                 yield(b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' + bytearray(encodedImage) + b'\r\n')
         else:
             ret = False
-=======
-# def main():
-#     cfg = load_model()
-#     test_metadata = MetadataCatalog.get("my_dataset_test")
-#     key = "instances"
-
-#     predictor = DefaultPredictor(cfg)
-#     vid = cv2.VideoCapture(0, cv2.CAP_DSHOW)
-
-#     while True:
-#         # check camera is open
-#         if vid.isOpened():
-#                 ret, frame = vid.read()
-#                 outputs = predictor(frame)
-#                 v = Visualizer(frame[:, :, ::-1], MetadataCatalog.get(cfg.DATASETS.TRAIN[0]), scale=0.5, instance_mode=ColorMode.SEGMENTATION)
-#                 out = v.draw_instance_predictions(outputs["instances"].to("cpu"))
-#                 prediction_boxes = outputs["instances"].pred_boxes
-#                 metadata = MetadataCatalog.get(cfg.DATASETS.TRAIN[0])
-#                 class_catalog = metadata.thing_classes
-#                 for idx, coordinates in enumerate(prediction_boxes):
-#                     class_index = outputs["instances"].pred_classes[idx]
-#                     class_name = class_catalog[class_index]
-#                     print(class_name, coordinates.cpu().numpy())
-#                 (flag, encodedImage) = cv2.imencode(".jpg", out.get_image()[:, :, ::-1])
-#                 yield(b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' + bytearray(encodedImage) + b'\r\n')
-#                 # cv2.imshow("frame", out.get_image()[:, :, ::-1])
-#                 # cv2.waitKey(1)
-#         else:
-#             ret = False
->>>>>>> da0348aadda0324e02fbf24d0f5d0409672c3c9e
 
