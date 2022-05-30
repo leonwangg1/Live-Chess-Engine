@@ -347,7 +347,7 @@ def main(cfg):
 
                 # Canny algorithm
                 edges = canny_edge(gray_blur)
-                cv2.imwrite('edges.jpg',edges)
+                # cv2.imwrite('edges.jpg',edges)
 
                 # Hough Transform
                 lines = hough_line(edges)
