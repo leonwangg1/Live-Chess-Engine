@@ -1,8 +1,6 @@
 from flask import Markup, Flask, render_template, Response, url_for
 import threading
 import chesspiecedetection
-import perspective
-import chessboarddetection
 import chess
 import chess.engine
 import chess.svg

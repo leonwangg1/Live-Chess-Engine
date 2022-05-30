@@ -367,7 +367,7 @@ def main(cfg):
                 matrix = convertCorners2Matrix(points)
                 coordinates_squares = parseMatrix(matrix)
                 print("Found ", len(coordinates_squares), " squares")
-                print(coordinates_squares)
+                # print(coordinates_squares)
 
                 predictor = DefaultPredictor(cfg)
                 outputs = predictor(img)
@@ -387,8 +387,8 @@ def main(cfg):
                   for idx, square in enumerate(coordinates_squares):
                     # print(square[0], square[1], square[2], square[3])
                     if w >= square[0] and w <= square[2] and h >= square[1] and h <= square[3]:
-                      print("piece set in board at ", squares[idx+1])
-                      loc = squares[idx+1]
+                      print("piece set in board at ", squares[idx])
+                      loc = squares[idx]
                       if name == "black-rook":
                           cpiece = chess.Piece(chess.ROOK, chess.BLACK)
                           b.set_piece_at(chess.parse_square(str(loc)), cpiece)
