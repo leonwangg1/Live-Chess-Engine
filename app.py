@@ -22,7 +22,6 @@ cfg = chesspiecedetection.load_model()
 vc = cv2.VideoCapture(0)
 lock = threading.Lock()
 board = chess.Board()
-engine = chess.engine.SimpleEngine.popen_uci("stockfish_15_x64_avx2.exe")
 
 @app.route('/')
 def main():
@@ -33,7 +32,7 @@ def board_feed():
     global board
     global cfg
     global cv
-    return Response(boardextraction.main(cfg, engine), mimetype = "multipart/x-mixed-replace; boundary=frame")
+    return Response(boardextraction.main(cfg), mimetype = "multipart/x-mixed-replace; boundary=frame")
 
 
 @app.route('/stream',methods = ['GET'])

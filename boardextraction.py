@@ -271,9 +271,10 @@ def parseMatrix(matrix):
         new_matrix.append([x1, y1, x2, y2])
     return new_matrix
 
-def main(cfg, engine):
+def main(cfg):
     vid = cv2.VideoCapture(0, cv2.CAP_DSHOW)
     b = chess.Board(None)
+    engine = chess.engine.SimpleEngine.popen_uci("stockfish_15_x64_avx2.exe")
 
     while True:
         if vid.isOpened():
@@ -355,7 +356,7 @@ def main(cfg, engine):
                     for idx, square in enumerate(coordinates_squares):
                       # print(square[0], square[1], square[2], square[3])
                       if w >= square[0] and w <= square[2] and h >= square[1] and h <= square[3]:
-                        print("piece set in board at ", squares[idx])
+                        print("Piece set in board at ", squares[idx])
                         loc = squares[idx]
                         if name == "black-rook":
                             cpiece = chess.Piece(chess.ROOK, chess.BLACK)
@@ -396,10 +397,12 @@ def main(cfg, engine):
                             b.set_piece_at(chess.parse_square(str(loc)), cpiece)
                   move = None
                   b = b.transform(chess.flip_vertical)
+                  # bfen = b.board_fen
+                  # print("Current board FEN ", bfen)
                   try:
+                    engine = chess.engine.SimpleEngine.popen_uci("stockfish_15_x64_avx2.exe")
                     move = engine.play(b, chess.engine.Limit(time=0.5)).move
                   except Exception as e:
-                    engine = chess.engine.SimpleEngine.popen_uci("stockfish_15_x64_avx2.exe")
                     print(e)
                   if move is None:
                     svg = chess.svg.board(b, size=400)
