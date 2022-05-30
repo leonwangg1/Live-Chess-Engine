@@ -26,7 +26,7 @@ import chess
 import chess.svg
 
 PADDING = (15, 20)
-# NEED_ROTATE = True
+NEED_ROTATE = True
 NEED_PADDING = True
 OUTPUT_IMAGE_SIZE = (500, 500)
 
@@ -48,10 +48,10 @@ def random_color():
   color = list(np.random.choice(range(256), size=3))
   return (int(color[0]), int(color[1]), int(color[2]))
 
-# def rotate_image(image, angle):
-#   # Grab the dimensions of the image and then determine the center
-#   (h, w) = image.shape[:2]
-#   (cX, cY) = (w / 2, h / 2)
+def rotate_image(image, angle):
+  # Grab the dimensions of the image and then determine the center
+  (h, w) = image.shape[:2]
+  (cX, cY) = (w / 2, h / 2)
 
   # grab the rotation matrix (applying the negative of the
   # angle to rotate clockwise), then grab the sine and cosine
@@ -303,42 +303,42 @@ def main(cfg):
                 #---------------------------------------------------------------------
                 transformed = perspective_transform(image.copy(), biggest_cnt)
 
-                # if NEED_ROTATE:
-                #     rotated = rotate_image(transformed, -90)
+                if NEED_ROTATE:
+                    rotated = rotate_image(transformed, -90)
 
-                img = transformed
-                h, w = img.shape[:2]
-                padding_horizontal, padding_vertical = PADDING
-                imgcopied = img.copy()
+                img = rotated
+                # h, w = img.shape[:2]
+                # padding_horizontal, padding_vertical = PADDING
+                # imgcopied = img.copy()
 
-                cv2.circle(imgcopied, PADDING, 5, (0,0,255), -1)
-                cv2.circle(imgcopied, (w - padding_horizontal, padding_vertical), 5, (0,255,0), -1)
+                # cv2.circle(imgcopied, PADDING, 5, (0,0,255), -1)
+                # cv2.circle(imgcopied, (w - padding_horizontal, padding_vertical), 5, (0,255,0), -1)
 
-                cv2.circle(imgcopied, (padding_horizontal, h - padding_vertical), 5, (255,0,0), -1)
-                cv2.circle(imgcopied, (w - padding_horizontal, h - padding_vertical), 5, (255,0,0), -1)
+                # cv2.circle(imgcopied, (padding_horizontal, h - padding_vertical), 5, (255,0,0), -1)
+                # cv2.circle(imgcopied, (w - padding_horizontal, h - padding_vertical), 5, (255,0,0), -1)
 
-                if NEED_PADDING:
-                    output_img_h, output_img_w, = OUTPUT_IMAGE_SIZE
+                # if NEED_PADDING:
+                #     output_img_h, output_img_w, = OUTPUT_IMAGE_SIZE
 
-                    pts1 = np.float32([
-                    PADDING,
-                    (w - padding_horizontal, padding_vertical),
-                    (padding_horizontal, h - padding_vertical),
-                    (w - padding_horizontal, h - padding_vertical)
-                    ])
+                #     pts1 = np.float32([
+                #     PADDING,
+                #     (w - padding_horizontal, padding_vertical),
+                #     (padding_horizontal, h - padding_vertical),
+                #     (w - padding_horizontal, h - padding_vertical)
+                #     ])
 
-                    pts2 = np.float32([
-                    [0, 0],
-                    [output_img_w, 0],
-                    [0, output_img_h],
-                    [output_img_w, output_img_h]
-                    ])
+                #     pts2 = np.float32([
+                #     [0, 0],
+                #     [output_img_w, 0],
+                #     [0, output_img_h],
+                #     [output_img_w, output_img_h]
+                #     ])
 
-                    M = cv2.getPerspectiveTransform(pts1, pts2)
-                    dst = cv2.warpPerspective(img, M, OUTPUT_IMAGE_SIZE)
+                #     M = cv2.getPerspectiveTransform(pts1, pts2)
+                #     dst = cv2.warpPerspective(img, M, OUTPUT_IMAGE_SIZE)
 
                 # https://towardsdatascience.com/board-game-image-recognition-using-neural-networks-116fc876dafa
-                img = dst
+                # img = dst
                 gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
                 # Blur the image a little. This smooths out the noise a bit and
@@ -368,70 +368,72 @@ def main(cfg):
                 coordinates_squares = parseMatrix(matrix)
                 print("Found ", len(coordinates_squares), " squares")
                 # print(coordinates_squares)
+                if len(coordinates_squares) == 64:
+                  predictor = DefaultPredictor(cfg)
+                  outputs = predictor(img)
+                  prediction_boxes = outputs["instances"].pred_boxes
+                  metadata = MetadataCatalog.get(cfg.DATASETS.TRAIN[0])
+                  class_catalog = metadata.thing_classes
+                  v = Visualizer(img[:, :, ::-1], MetadataCatalog.get(cfg.DATASETS.TRAIN[0]), scale=0.5, instance_mode=ColorMode.SEGMENTATION)
+                  out = v.draw_instance_predictions(outputs["instances"].to("cpu"))
+                  b = chess.Board(None)
+                  for idx, coordinates in enumerate(prediction_boxes):
+                    coordinates = coordinates.cpu().numpy()
+                    w = (coordinates[0] + coordinates[2])/2
+                    h = (coordinates[1] + coordinates[3])/2
+                    class_index = outputs["instances"].pred_classes[idx]
+                    name = class_catalog[class_index]
+                    print("Detected ", name, "At ", int(w), " and ", int(h)) 
+                    for idx, square in enumerate(coordinates_squares):
+                      # print(square[0], square[1], square[2], square[3])
+                      if w >= square[0] and w <= square[2] and h >= square[1] and h <= square[3]:
+                        print("piece set in board at ", squares[idx])
+                        loc = squares[idx]
+                        if name == "black-rook":
+                            cpiece = chess.Piece(chess.ROOK, chess.BLACK)
+                            b.set_piece_at(chess.parse_square(str(loc)), cpiece)
+                        if name == "black-queen":
+                            cpiece = chess.Piece(chess.QUEEN, chess.BLACK)
+                            b.set_piece_at(chess.parse_square(str(loc)), cpiece)
+                        if name == "black-bishop":
+                            cpiece = chess.Piece(chess.BISHOP, chess.BLACK)
+                            b.set_piece_at(chess.parse_square(str(loc)), cpiece)
+                        if name == "black-knight":
+                            cpiece = chess.Piece(chess.KNIGHT, chess.BLACK)
+                            b.set_piece_at(chess.parse_square(str(loc)), cpiece)
+                        if name == "black-pawn":
+                            cpiece = chess.Piece(chess.PAWN, chess.BLACK)
+                            b.set_piece_at(chess.parse_square(str(loc)), cpiece)
+                        if name == "black-king":
+                            cpiece = chess.Piece(chess.KING, chess.BLACK)
+                            b.set_piece_at(chess.parse_square(str(loc)), cpiece)
 
-                predictor = DefaultPredictor(cfg)
-                outputs = predictor(img)
-                prediction_boxes = outputs["instances"].pred_boxes
-                metadata = MetadataCatalog.get(cfg.DATASETS.TRAIN[0])
-                class_catalog = metadata.thing_classes
-                v = Visualizer(img[:, :, ::-1], MetadataCatalog.get(cfg.DATASETS.TRAIN[0]), scale=0.5, instance_mode=ColorMode.SEGMENTATION)
-                out = v.draw_instance_predictions(outputs["instances"].to("cpu"))
-                b = chess.Board(None)
-                for idx, coordinates in enumerate(prediction_boxes):
-                  coordinates = coordinates.cpu().numpy()
-                  w = (coordinates[0] + coordinates[2])/2
-                  h = (coordinates[1] + coordinates[3])/2
-                  class_index = outputs["instances"].pred_classes[idx]
-                  name = class_catalog[class_index]
-                  print("Detected ", name, "At ", int(w), " and ", int(h)) 
-                  for idx, square in enumerate(coordinates_squares):
-                    # print(square[0], square[1], square[2], square[3])
-                    if w >= square[0] and w <= square[2] and h >= square[1] and h <= square[3]:
-                      print("piece set in board at ", squares[idx])
-                      loc = squares[idx]
-                      if name == "black-rook":
-                          cpiece = chess.Piece(chess.ROOK, chess.BLACK)
-                          b.set_piece_at(chess.parse_square(str(loc)), cpiece)
-                      if name == "black-queen":
-                          cpiece = chess.Piece(chess.QUEEN, chess.BLACK)
-                          b.set_piece_at(chess.parse_square(str(loc)), cpiece)
-                      if name == "black-bishop":
-                          cpiece = chess.Piece(chess.BISHOP, chess.BLACK)
-                          b.set_piece_at(chess.parse_square(str(loc)), cpiece)
-                      if name == "black-knight":
-                          cpiece = chess.Piece(chess.KNIGHT, chess.BLACK)
-                          b.set_piece_at(chess.parse_square(str(loc)), cpiece)
-                      if name == "black-pawn":
-                          cpiece = chess.Piece(chess.PAWN, chess.BLACK)
-                          b.set_piece_at(chess.parse_square(str(loc)), cpiece)
-                      if name == "black-king":
-                          cpiece = chess.Piece(chess.KING, chess.BLACK)
-                          b.set_piece_at(chess.parse_square(str(loc)), cpiece)
-
-                      if name == "white-rook":
-                          cpiece = chess.Piece(chess.ROOK, chess.WHITE)
-                          b.set_piece_at(chess.parse_square(str(loc)), cpiece)
-                      if name == "white-queen":
-                          cpiece = chess.Piece(chess.QUEEN, chess.WHITE)
-                          b.set_piece_at(chess.parse_square(str(loc)), cpiece)
-                      if name == "white-bishop":
-                          cpiece = chess.Piece(chess.BISHOP, chess.WHITE)
-                          b.set_piece_at(chess.parse_square(str(loc)), cpiece)
-                      if name == "white-knight":
-                          cpiece = chess.Piece(chess.KNIGHT, chess.WHITE)
-                          b.set_piece_at(chess.parse_square(str(loc)), cpiece)
-                      if name == "white-pawn":
-                          cpiece = chess.Piece(chess.PAWN, chess.WHITE)
-                          b.set_piece_at(chess.parse_square(str(loc)), cpiece)
-                      if name == "white-king":
-                          cpiece = chess.Piece(chess.KING, chess.WHITE)
-                          b.set_piece_at(chess.parse_square(str(loc)), cpiece)
-                svg = chess.svg.board(b, size=400)
-                yield ('--frame\r\n'
-                'Content-Type: image/svg+xml\r\n\r\n' + svg + '\r\n')
-                # (flag, encodedImage) = cv2.imencode(".jpg", img)
-                # yield(b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' + bytearray(encodedImage) + b'\r\n')
-                time.sleep(1)
+                        if name == "white-rook":
+                            cpiece = chess.Piece(chess.ROOK, chess.WHITE)
+                            b.set_piece_at(chess.parse_square(str(loc)), cpiece)
+                        if name == "white-queen":
+                            cpiece = chess.Piece(chess.QUEEN, chess.WHITE)
+                            b.set_piece_at(chess.parse_square(str(loc)), cpiece)
+                        if name == "white-bishop":
+                            cpiece = chess.Piece(chess.BISHOP, chess.WHITE)
+                            b.set_piece_at(chess.parse_square(str(loc)), cpiece)
+                        if name == "white-knight":
+                            cpiece = chess.Piece(chess.KNIGHT, chess.WHITE)
+                            b.set_piece_at(chess.parse_square(str(loc)), cpiece)
+                        if name == "white-pawn":
+                            cpiece = chess.Piece(chess.PAWN, chess.WHITE)
+                            b.set_piece_at(chess.parse_square(str(loc)), cpiece)
+                        if name == "white-king":
+                            cpiece = chess.Piece(chess.KING, chess.WHITE)
+                            b.set_piece_at(chess.parse_square(str(loc)), cpiece)
+                  svg = chess.svg.board(b, size=400)
+                  yield ('--frame\r\n'
+                  'Content-Type: image/svg+xml\r\n\r\n' + svg + '\r\n')
+                  # (flag, encodedImage) = cv2.imencode(".jpg", img)
+                  # yield(b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' + bytearray(encodedImage) + b'\r\n')
+                  time.sleep(1)
+                else:
+                  print("Insufficient squares")
             except Exception as e:
               print(e)
                 # print("Adjust board position or try change add_padding parameter.")
