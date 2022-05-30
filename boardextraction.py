@@ -273,6 +273,7 @@ def parseMatrix(matrix):
 def main(cfg):
     vid = cv2.VideoCapture(0, cv2.CAP_DSHOW)
     b = chess.Board(None)
+    engine = chess.engine.SimpleEngine.popen_uci("./stockfish_15_x64_avx2")
 
     while True:
         if vid.isOpened():
@@ -307,38 +308,6 @@ def main(cfg):
                     rotated = rotate_image(transformed, -90)
 
                 img = rotated
-                # h, w = img.shape[:2]
-                # padding_horizontal, padding_vertical = PADDING
-                # imgcopied = img.copy()
-
-                # cv2.circle(imgcopied, PADDING, 5, (0,0,255), -1)
-                # cv2.circle(imgcopied, (w - padding_horizontal, padding_vertical), 5, (0,255,0), -1)
-
-                # cv2.circle(imgcopied, (padding_horizontal, h - padding_vertical), 5, (255,0,0), -1)
-                # cv2.circle(imgcopied, (w - padding_horizontal, h - padding_vertical), 5, (255,0,0), -1)
-
-                # if NEED_PADDING:
-                #     output_img_h, output_img_w, = OUTPUT_IMAGE_SIZE
-
-                #     pts1 = np.float32([
-                #     PADDING,
-                #     (w - padding_horizontal, padding_vertical),
-                #     (padding_horizontal, h - padding_vertical),
-                #     (w - padding_horizontal, h - padding_vertical)
-                #     ])
-
-                #     pts2 = np.float32([
-                #     [0, 0],
-                #     [output_img_w, 0],
-                #     [0, output_img_h],
-                #     [output_img_w, output_img_h]
-                #     ])
-
-                #     M = cv2.getPerspectiveTransform(pts1, pts2)
-                #     dst = cv2.warpPerspective(img, M, OUTPUT_IMAGE_SIZE)
-
-                # https://towardsdatascience.com/board-game-image-recognition-using-neural-networks-116fc876dafa
-                # img = dst
                 gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
                 # Blur the image a little. This smooths out the noise a bit and
@@ -426,7 +395,16 @@ def main(cfg):
                         if name == "white-king":
                             cpiece = chess.Piece(chess.KING, chess.WHITE)
                             b.set_piece_at(chess.parse_square(str(loc)), cpiece)
-                  svg = chess.svg.board(b, size=400)
+                  move = None
+                  try:
+                    move = engine.play(b, chess.engine.Limit(time=0.5)).move
+                  except Exception as e:
+                    engine = chess.engine.SimpleEngine.popen_uci("./stockfish_15_x64_avx2")
+                  if move is None:
+                    svg = chess.svg.board(b, size=400)
+                  else:
+                    svg = chess.svg.board(b, size=400, arrows=[chess.svg.Arrow(move.from_square, move.to_square)])
+                  # svg = chess.svg.board(b, size=400)
                   yield ('--frame\r\n'
                   'Content-Type: image/svg+xml\r\n\r\n' + svg + '\r\n')
                   # (flag, encodedImage) = cv2.imencode(".jpg", img)
