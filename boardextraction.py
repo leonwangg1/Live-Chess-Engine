@@ -1,5 +1,6 @@
 import math
 from math import sqrt
+from unicodedata import mirrored
 import cv2
 import matplotlib.pyplot as plt
 import numpy as np
@@ -395,8 +396,9 @@ def main(cfg, engine):
                             cpiece = chess.Piece(chess.KING, chess.WHITE)
                             b.set_piece_at(chess.parse_square(str(loc)), cpiece)
                   move = None
+                  b = b.transform(chess.flip_vertical)
                   try:
-                    move = engine.play(b, chess.engine.Limit(time=0.5))
+                    move = engine.play(b, chess.engine.Limit(time=0.5)).move
                   except Exception as e:
                     engine = chess.engine.SimpleEngine.popen_uci("stockfish_15_x64_avx2.exe")
                     print(e)
