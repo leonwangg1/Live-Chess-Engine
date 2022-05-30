@@ -24,6 +24,7 @@ from detectron2.data.datasets import register_coco_instances
 from square import Square
 import chess
 import chess.svg
+import chess.engine
 
 PADDING = (15, 20)
 NEED_ROTATE = True
@@ -270,10 +271,9 @@ def parseMatrix(matrix):
         new_matrix.append([x1, y1, x2, y2])
     return new_matrix
 
-def main(cfg):
+def main(cfg, engine):
     vid = cv2.VideoCapture(0, cv2.CAP_DSHOW)
     b = chess.Board(None)
-    engine = chess.engine.SimpleEngine.popen_uci("./stockfish_15_x64_avx2")
 
     while True:
         if vid.isOpened():
@@ -306,7 +306,6 @@ def main(cfg):
 
                 if NEED_ROTATE:
                     rotated = rotate_image(transformed, -90)
-
                 img = rotated
                 gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
@@ -397,13 +396,16 @@ def main(cfg):
                             b.set_piece_at(chess.parse_square(str(loc)), cpiece)
                   move = None
                   try:
-                    move = engine.play(b, chess.engine.Limit(time=0.5)).move
+                    move = engine.play(b, chess.engine.Limit(time=0.5))
                   except Exception as e:
-                    engine = chess.engine.SimpleEngine.popen_uci("./stockfish_15_x64_avx2")
+                    engine = chess.engine.SimpleEngine.popen_uci("stockfish_15_x64_avx2.exe")
+                    print(e)
                   if move is None:
                     svg = chess.svg.board(b, size=400)
+                    print("\nNo move found\n")
                   else:
-                    svg = chess.svg.board(b, size=400, arrows=[chess.svg.Arrow(move.from_square, move.to_square)])
+                    svg = chess.svg.board(b, size=400, arrows=[chess.svg.Arrow(move.from_square, move.to_square, color="#0000cccc")])
+                    print("\nMove found\n")
                   # svg = chess.svg.board(b, size=400)
                   yield ('--frame\r\n'
                   'Content-Type: image/svg+xml\r\n\r\n' + svg + '\r\n')
