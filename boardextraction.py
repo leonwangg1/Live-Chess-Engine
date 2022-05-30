@@ -22,7 +22,6 @@ from detectron2.data import MetadataCatalog
 from detectron2.data.catalog import DatasetCatalog
 from detectron2.utils.visualizer import ColorMode
 from detectron2.data.datasets import register_coco_instances
-from square import Square
 import chess
 import chess.svg
 import chess.engine
