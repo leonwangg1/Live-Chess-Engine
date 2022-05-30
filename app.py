@@ -16,7 +16,7 @@ from detectron2.data.catalog import DatasetCatalog
 from detectron2.utils.visualizer import ColorMode
 from detectron2.data.datasets import register_coco_instances
 import time
-import testing
+import boardextraction
 import cv2
 
 app = Flask(__name__)
@@ -35,7 +35,7 @@ def board_feed():
     global board
     global cfg
     global cv
-    return Response(testing.main(), mimetype = "multipart/x-mixed-replace; boundary=frame")
+    return Response(boardextraction.main(cfg), mimetype = "multipart/x-mixed-replace; boundary=frame")
 
 
 @app.route('/stream',methods = ['GET'])

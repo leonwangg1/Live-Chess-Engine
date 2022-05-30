@@ -47,6 +47,15 @@ def video_prediction(cfg):
         if vid.isOpened():
                 ret, frame = vid.read()
                 outputs = predictor(frame)
+                prediction_boxes = outputs["instances"].pred_boxes
+                metadata = MetadataCatalog.get(cfg.DATASETS.TRAIN[0])
+                class_catalog = metadata.thing_classes
+                # for idx, coordinates in enumerate(prediction_boxes):
+                #     class_index = outputs["instances"].pred_classes[idx]
+                #     class_name = class_catalog[class_index]
+                #     print(class_name, coordinates.cpu().numpy()) 
+                # for idx, coordinates in enumerate(prediction_boxes):
+                #     count += 1
                 v = Visualizer(frame[:, :, ::-1], MetadataCatalog.get(cfg.DATASETS.TRAIN[0]), scale=0.5, instance_mode=ColorMode.SEGMENTATION)
                 out = v.draw_instance_predictions(outputs["instances"].to("cpu"))
                 (flag, encodedImage) = cv2.imencode(".jpg", out.get_image()[:, :, ::-1])

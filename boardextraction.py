@@ -12,11 +12,34 @@ from skimage import exposure
 import argparse
 import random
 import time
+import detectron2
+from detectron2 import model_zoo
+from detectron2.engine import DefaultPredictor
+from detectron2.config import get_cfg
+from detectron2.utils.visualizer import Visualizer
+from detectron2.data import MetadataCatalog
+from detectron2.data.catalog import DatasetCatalog
+from detectron2.utils.visualizer import ColorMode
+from detectron2.data.datasets import register_coco_instances
+from square import Square
+import chess
+import chess.svg
 
 PADDING = (15, 20)
-NEED_ROTATE = True
+# NEED_ROTATE = True
 NEED_PADDING = True
 OUTPUT_IMAGE_SIZE = (500, 500)
+
+squares = [
+            'a1', 'b1', 'c1', 'd1', 'e1', 'f1', 'g1', 'h1',
+            'a2', 'b2', 'c2', 'd2', 'e2', 'f2', 'g2', 'h2',
+            'a3', 'b3', 'c3', 'd3', 'e3', 'f3', 'g3', 'h3',
+            'a4', 'b4', 'c4', 'd4', 'e4', 'f4', 'g4', 'h4',
+            'a5', 'b5', 'c5', 'd5', 'e5', 'f5', 'g5', 'h5',
+            'a6', 'b6', 'c6', 'd6', 'e6', 'f6', 'g6', 'h6',
+            'a7', 'b7', 'c7', 'd7', 'e7', 'f7', 'g7', 'h7',
+            'a8', 'b8', 'c8', 'd8', 'e8', 'f8', 'g8', 'h8',
+        ]
 
 def random_color():
   """
@@ -25,10 +48,10 @@ def random_color():
   color = list(np.random.choice(range(256), size=3))
   return (int(color[0]), int(color[1]), int(color[2]))
 
-def rotate_image(image, angle):
-  # Grab the dimensions of the image and then determine the center
-  (h, w) = image.shape[:2]
-  (cX, cY) = (w / 2, h / 2)
+# def rotate_image(image, angle):
+#   # Grab the dimensions of the image and then determine the center
+#   (h, w) = image.shape[:2]
+#   (cX, cY) = (w / 2, h / 2)
 
   # grab the rotation matrix (applying the negative of the
   # angle to rotate clockwise), then grab the sine and cosine
@@ -184,8 +207,73 @@ def cluster_points(points):
   clusters = map(lambda arr: (np.mean(np.array(arr)[:, 0]), np.mean(np.array(arr)[:, 1])), cluster_values)
   return sorted(list(clusters), key=lambda k: [k[1], k[0]])
 
-def main():
+def convertCorners2Matrix(corners):
+    """
+    Convert chess board squares corners into 9x9 matrix of points.
+
+    matrix:
+
+    [
+      [coord0_0, coord0_1, ...., coord0_N]
+      [coord1_0, coord1_1, ...., coord1_N]
+      [coord2_0, coord2_1, ...., coord2_N]
+    ]
+    """
+    # we will start with first corner
+    thresh_val=10.0
+    corner = corners[0]
+    target_corner = tuple([int(round(corner[0]) ), int(round(corner[1])) ])
+    chess_matrix = []
+    while len(corners) != 0:
+      # get all corners where axis y between min_thresh and max_thresh
+      min_thresh = target_corner[1] - thresh_val
+      max_thresh = target_corner[1] + thresh_val
+      line_corners = [p for p in corners if p[1] >= min_thresh and p[1] <= max_thresh]
+      line_corners.sort(key=lambda p: p[0])
+
+      # add corners of the line into matrix
+      if len(line_corners) > 0:
+        chess_matrix.append(line_corners)
+
+      # remove finded corners of the main array
+      corners = [p for p in corners if p not in line_corners]
+
+      # define a new target corner
+      if len(corners) != 0:
+        target_corner = corners[0]
+
+    return chess_matrix
+
+def parseMatrix(matrix):
+    """
+    Parse matrix 9x9 of points into a matrix 8x8 of `Square` object
+
+    matrix:
+    
+    [
+      [Square0_0, Square0_1, ...., Square0_N]
+      [Square1_0, Square1_1, ...., Square1_N]
+      [Square2_0, Square2_1, ...., Square2_N]
+    ]
+    """
+
+    new_matrix = []
+    for (row_idx, points) in enumerate(matrix[:len(matrix) - 1]):
+      for (col_idx, pt1) in enumerate(points[:len(points) - 1]):
+        pt2 = matrix[row_idx + 1][col_idx + 1]
+
+        x1 = round(pt1[0])
+        y1 = round(pt1[1])
+        x2 = round(pt2[0])
+        y2 = round(pt2[1])
+
+        new_matrix.append([x1, y1, x2, y2])
+    return new_matrix
+
+def main(cfg):
     vid = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+    b = chess.Board(None)
+
     while True:
         if vid.isOpened():
             ret, image = vid.read()
@@ -215,10 +303,10 @@ def main():
                 #---------------------------------------------------------------------
                 transformed = perspective_transform(image.copy(), biggest_cnt)
 
-                if NEED_ROTATE:
-                    rotated = rotate_image(transformed, -90)
+                # if NEED_ROTATE:
+                #     rotated = rotate_image(transformed, -90)
 
-                img = rotated
+                img = transformed
                 h, w = img.shape[:2]
                 padding_horizontal, padding_vertical = PADDING
                 imgcopied = img.copy()
@@ -271,14 +359,79 @@ def main():
                 intersection_points = line_intersections(h_lines, v_lines)
                 points = cluster_points(intersection_points)
 
-                # with index
-                for (idx, point) in enumerate(points):
-                    color = random_color()
-                    cv2.putText(img, str(idx), tuple([int(round(point[0]) ), int(round(point[1])) ]), cv2.FONT_HERSHEY_PLAIN, 1.0, color, 2)
-                    cv2.circle(img, tuple([int(round(point[0]) ), int(round(point[1])) ]), 3, color, -1)
-                
-                (flag, encodedImage) = cv2.imencode(".jpg", img)
-                yield(b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' + bytearray(encodedImage) + b'\r\n')
+                # # with index
+                # for (idx, point) in enumerate(points):
+                #     color = random_color()
+                #     cv2.putText(img, str(idx), tuple([int(round(point[0]) ), int(round(point[1])) ]), cv2.FONT_HERSHEY_PLAIN, 1.0, color, 2)
+                #     cv2.circle(img, tuple([int(round(point[0]) ), int(round(point[1])) ]), 3, color, -1)
+                matrix = convertCorners2Matrix(points)
+                coordinates_squares = parseMatrix(matrix)
+                print("Found ", len(coordinates_squares), " squares")
+                print(coordinates_squares)
+
+                predictor = DefaultPredictor(cfg)
+                outputs = predictor(img)
+                prediction_boxes = outputs["instances"].pred_boxes
+                metadata = MetadataCatalog.get(cfg.DATASETS.TRAIN[0])
+                class_catalog = metadata.thing_classes
+                v = Visualizer(img[:, :, ::-1], MetadataCatalog.get(cfg.DATASETS.TRAIN[0]), scale=0.5, instance_mode=ColorMode.SEGMENTATION)
+                out = v.draw_instance_predictions(outputs["instances"].to("cpu"))
+                b = chess.Board(None)
+                for idx, coordinates in enumerate(prediction_boxes):
+                  coordinates = coordinates.cpu().numpy()
+                  w = (coordinates[0] + coordinates[2])/2
+                  h = (coordinates[1] + coordinates[3])/2
+                  class_index = outputs["instances"].pred_classes[idx]
+                  name = class_catalog[class_index]
+                  print("Detected ", name, "At ", int(w), " and ", int(h)) 
+                  for idx, square in enumerate(coordinates_squares):
+                    # print(square[0], square[1], square[2], square[3])
+                    if w >= square[0] and w <= square[2] and h >= square[1] and h <= square[3]:
+                      print("piece set in board at ", squares[idx+1])
+                      loc = squares[idx+1]
+                      if name == "black-rook":
+                          cpiece = chess.Piece(chess.ROOK, chess.BLACK)
+                          b.set_piece_at(chess.parse_square(str(loc)), cpiece)
+                      if name == "black-queen":
+                          cpiece = chess.Piece(chess.QUEEN, chess.BLACK)
+                          b.set_piece_at(chess.parse_square(str(loc)), cpiece)
+                      if name == "black-bishop":
+                          cpiece = chess.Piece(chess.BISHOP, chess.BLACK)
+                          b.set_piece_at(chess.parse_square(str(loc)), cpiece)
+                      if name == "black-knight":
+                          cpiece = chess.Piece(chess.KNIGHT, chess.BLACK)
+                          b.set_piece_at(chess.parse_square(str(loc)), cpiece)
+                      if name == "black-pawn":
+                          cpiece = chess.Piece(chess.PAWN, chess.BLACK)
+                          b.set_piece_at(chess.parse_square(str(loc)), cpiece)
+                      if name == "black-king":
+                          cpiece = chess.Piece(chess.KING, chess.BLACK)
+                          b.set_piece_at(chess.parse_square(str(loc)), cpiece)
+
+                      if name == "white-rook":
+                          cpiece = chess.Piece(chess.ROOK, chess.WHITE)
+                          b.set_piece_at(chess.parse_square(str(loc)), cpiece)
+                      if name == "white-queen":
+                          cpiece = chess.Piece(chess.QUEEN, chess.WHITE)
+                          b.set_piece_at(chess.parse_square(str(loc)), cpiece)
+                      if name == "white-bishop":
+                          cpiece = chess.Piece(chess.BISHOP, chess.WHITE)
+                          b.set_piece_at(chess.parse_square(str(loc)), cpiece)
+                      if name == "white-knight":
+                          cpiece = chess.Piece(chess.KNIGHT, chess.WHITE)
+                          b.set_piece_at(chess.parse_square(str(loc)), cpiece)
+                      if name == "white-pawn":
+                          cpiece = chess.Piece(chess.PAWN, chess.WHITE)
+                          b.set_piece_at(chess.parse_square(str(loc)), cpiece)
+                      if name == "white-king":
+                          cpiece = chess.Piece(chess.KING, chess.WHITE)
+                          b.set_piece_at(chess.parse_square(str(loc)), cpiece)
+                svg = chess.svg.board(b, size=400)
+                yield ('--frame\r\n'
+                'Content-Type: image/svg+xml\r\n\r\n' + svg + '\r\n')
+                # (flag, encodedImage) = cv2.imencode(".jpg", img)
+                # yield(b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' + bytearray(encodedImage) + b'\r\n')
                 time.sleep(1)
             except Exception as e:
-                print("Adjust board position")
+              print(e)
+                # print("Adjust board position or try change add_padding parameter.")
