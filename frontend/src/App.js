@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { BrowserRouter as Router, Route, Link, Switch } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Link, Switch, Redirect } from 'react-router-dom';
 import Main_Screen from 'components/Main_Screen';
 import About from 'components/About'
 import Contact from 'components/Contact'
@@ -25,9 +25,7 @@ class App extends Component {
       <Router hashType="noslash" basename={process.env.BASE_PATH}>
         <Switch>
           <Route exact path="/">
-            <div>
-              <Link to="/Main_Screen">Home</Link>
-            </div>
+              <Redirect to="/Main_Screen" />
           </Route>
 
           {/* Routers  for pages */}
