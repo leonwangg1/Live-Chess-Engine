@@ -13,6 +13,7 @@ from skimage import exposure
 import argparse
 import random
 import time
+import os
 import detectron2
 from detectron2 import model_zoo
 from detectron2.engine import DefaultPredictor
@@ -275,9 +276,13 @@ def main(cfg):
     vid = cv2.VideoCapture(0, cv2.CAP_DSHOW)
     b = chess.Board(None)
     engine = chess.engine.SimpleEngine.popen_uci("stockfish_15_x64_avx2.exe")
+    
+    i = 0
+    path = 'custom_imgs/'
 
     while True:
         if vid.isOpened():
+            i = i + 1
             ret, image = vid.read()
             # image = cv2.imread(img)
             gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
@@ -338,6 +343,8 @@ def main(cfg):
                 print("Found ", len(coordinates_squares), " squares")
                 # print(coordinates_squares)
                 if len(coordinates_squares) == 64:
+                  # cv2.imshow("yes?",img)
+                  # cv2.imwrite(os.path.join(path, "zomb {0}.jpg".format(i)),img)
                   predictor = DefaultPredictor(cfg)
                   outputs = predictor(img)
                   prediction_boxes = outputs["instances"].pred_boxes
@@ -357,43 +364,44 @@ def main(cfg):
                       # print(square[0], square[1], square[2], square[3])
                       if w >= square[0] and w <= square[2] and h >= square[1] and h <= square[3]:
                         print("Piece set in board at ", squares[idx])
+                        # gonna adjust some pieces. model so scuffed (bishop and queen pieces dont work in this case)
                         loc = squares[idx]
                         if name == "black-rook":
-                            cpiece = chess.Piece(chess.ROOK, chess.BLACK)
-                            b.set_piece_at(chess.parse_square(str(loc)), cpiece)
-                        if name == "black-queen":
-                            cpiece = chess.Piece(chess.QUEEN, chess.BLACK)
-                            b.set_piece_at(chess.parse_square(str(loc)), cpiece)
-                        if name == "black-bishop":
-                            cpiece = chess.Piece(chess.BISHOP, chess.BLACK)
-                            b.set_piece_at(chess.parse_square(str(loc)), cpiece)
-                        if name == "black-knight":
-                            cpiece = chess.Piece(chess.KNIGHT, chess.BLACK)
-                            b.set_piece_at(chess.parse_square(str(loc)), cpiece)
-                        if name == "black-pawn":
                             cpiece = chess.Piece(chess.PAWN, chess.BLACK)
                             b.set_piece_at(chess.parse_square(str(loc)), cpiece)
-                        if name == "black-king":
+                        if name == "black-queen":
+                            cpiece = chess.Piece(chess.ROOK, chess.BLACK)
+                            b.set_piece_at(chess.parse_square(str(loc)), cpiece)
+                        if name == "black-bishop":
                             cpiece = chess.Piece(chess.KING, chess.BLACK)
+                            b.set_piece_at(chess.parse_square(str(loc)), cpiece)
+                        if name == "black-knight":
+                            cpiece = chess.Piece(chess.PAWN, chess.BLACK)
+                            b.set_piece_at(chess.parse_square(str(loc)), cpiece)
+                        if name == "black-pawn":
+                            cpiece = chess.Piece(chess.KNIGHT, chess.BLACK)
+                            b.set_piece_at(chess.parse_square(str(loc)), cpiece)
+                        if name == "black-king":
+                            cpiece = chess.Piece(chess.KNIGHT, chess.BLACK)
                             b.set_piece_at(chess.parse_square(str(loc)), cpiece)
 
                         if name == "white-rook":
-                            cpiece = chess.Piece(chess.ROOK, chess.WHITE)
-                            b.set_piece_at(chess.parse_square(str(loc)), cpiece)
-                        if name == "white-queen":
                             cpiece = chess.Piece(chess.QUEEN, chess.WHITE)
                             b.set_piece_at(chess.parse_square(str(loc)), cpiece)
+                        if name == "white-queen":
+                            cpiece = chess.Piece(chess.ROOK, chess.WHITE)
+                            b.set_piece_at(chess.parse_square(str(loc)), cpiece)
                         if name == "white-bishop":
-                            cpiece = chess.Piece(chess.BISHOP, chess.WHITE)
+                            cpiece = chess.Piece(chess.KING, chess.WHITE)
                             b.set_piece_at(chess.parse_square(str(loc)), cpiece)
                         if name == "white-knight":
-                            cpiece = chess.Piece(chess.KNIGHT, chess.WHITE)
-                            b.set_piece_at(chess.parse_square(str(loc)), cpiece)
-                        if name == "white-pawn":
                             cpiece = chess.Piece(chess.PAWN, chess.WHITE)
                             b.set_piece_at(chess.parse_square(str(loc)), cpiece)
+                        if name == "white-pawn":
+                            cpiece = chess.Piece(chess.KNIGHT, chess.WHITE)
+                            b.set_piece_at(chess.parse_square(str(loc)), cpiece)
                         if name == "white-king":
-                            cpiece = chess.Piece(chess.KING, chess.WHITE)
+                            cpiece = chess.Piece(chess.KNIGHT, chess.WHITE)
                             b.set_piece_at(chess.parse_square(str(loc)), cpiece)
                   move = None
                   b = b.transform(chess.flip_vertical)
