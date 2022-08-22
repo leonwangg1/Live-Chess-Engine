@@ -28,7 +28,7 @@ Our approach follows this process:
 ![image](https://user-images.githubusercontent.com/62505788/167887379-b2e36bbd-80bc-469d-a598-6cd64a6bafae.png)
 
 Issues
-- model accuracy kinda shit
+- model accuracy isn't too good
 - <strike>stockfish engine not working<strike>
 -  <strike>board transformation doesn't detect all squares (maybe try change add padding parameters) - avg (42-list index out of range) <strike>
 -  <strike>frame keeps rotating for some reason (due to detecting other lines)<strike>
