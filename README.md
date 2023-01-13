@@ -6,10 +6,6 @@ In order to suggest the next best move, we should first know the current positio
 
 Dataset: https://public.roboflow.com/object-detection/chess-full
 
-## Files
-
-- w.i.p
-
 ## How to use
 
 ```shell
@@ -18,19 +14,16 @@ flask run
 cd frontend
 npm start
 ```
-## Challenges
+## Issues
 
-- Model bad accuracy in top down
-- Asynchronous implementation
+- [ ] Poor model accuray
+- [ ] Asynchronous implementation
+- [x] ~~Stockfish engine not working~~
+- [x] ~~Board transformation doesn't detect all squares (maybe try change add padding parameters) - avg (42-list index out of range)~~
+- [x] ~~Frame keeps rotating for some reason (detecting other lines?)~~
 
 ## Approach
 
 Our approach follows this process:
 
 ![image](https://user-images.githubusercontent.com/62505788/167887379-b2e36bbd-80bc-469d-a598-6cd64a6bafae.png)
-
-Issues
-- model accuracy isn't too good
-- <strike>stockfish engine not working<strike>
--  <strike>board transformation doesn't detect all squares (maybe try change add padding parameters) - avg (42-list index out of range) <strike>
--  <strike>frame keeps rotating for some reason (due to detecting other lines)<strike>
