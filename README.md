@@ -16,8 +16,10 @@ npm start
 ```
 ## Issues
 
-- [ ] Poor model accuray
+- [ ] Poor model accuracy
 - [ ] Asynchronous implementation
+- [ ] Update UI and virtual board
+- [ ] Deploy as web app
 - [x] ~~Stockfish engine not working~~
 - [x] ~~Board transformation doesn't detect all squares (maybe try change add padding parameters) - avg (42-list index out of range)~~
 - [x] ~~Frame keeps rotating for some reason (detecting other lines?)~~
